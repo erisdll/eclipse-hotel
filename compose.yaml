@@ -1,9 +1,15 @@
 services:
   postgres:
     image: 'postgres:latest'
+    container_name: eclipse-hotel_db
     environment:
-      - 'POSTGRES_DB=mydatabase'
+      - 'POSTGRES_DB=eclipse-hotel'
       - 'POSTGRES_PASSWORD=secret'
-      - 'POSTGRES_USER=myuser'
+      - 'POSTGRES_USER=erika'
     ports:
       - '5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
