@@ -1,3 +1,35 @@
 package com.erika.eclipse_hotel.entity;
 
-public class Customer { }
+import jakarta.persistence.*;
+import lombok.Data;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+@Entity
+@Table
+@Data
+public class Customer {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID id;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
+    private String email;
+
+    @Column(nullable = false)
+    private String phone;
+
+    //Fix create_at
+    @Column(name = "create_at", nullable = false, updatable = false)
+    private LocalDateTime createAt = LocalDateTime.now();
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Reservation> reservations = new ArrayList<>();
+}
