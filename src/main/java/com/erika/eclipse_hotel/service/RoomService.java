@@ -42,7 +42,7 @@ public class RoomService {
         return roomMapper.toResponseDTO(room);
     }
 
-    public RoomResponseDTO updateRoomById(RoomRequestDTO roomRequestDTO, Long id) {
+    public RoomResponseDTO updateRoomById(Long id, RoomRequestDTO roomRequestDTO) {
         Room room = roomRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Room not found. ID: " + id));
 
