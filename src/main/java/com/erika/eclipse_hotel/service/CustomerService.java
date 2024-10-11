@@ -19,6 +19,8 @@ public class CustomerService {
 
     @Autowired
     private CustomerMapper customerMapper;
+
+    @Autowired
     private CustomerRepository customerRepository;
 
     public CustomerResponseDTO createCustomer(CustomerRequestDTO customerRequestDTO) {
@@ -31,8 +33,7 @@ public class CustomerService {
     public List<CustomerResponseDTO> getAllCustomers() {
         List<Customer> customers = customerRepository.findAll();
 
-        return customers
-                .stream()
+        return customers.stream()
                 .map(customerMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
@@ -52,7 +53,7 @@ public class CustomerService {
         customer.setPhone(customerRequestDTO.getPhone());
 
         Customer updatedCustomer = customerRepository.save(customer);
-        return customerMapper.toResponseDTO(customer);
+        return customerMapper.toResponseDTO(updatedCustomer);
     }
 
     public void deleteCustomerById(UUID id) {

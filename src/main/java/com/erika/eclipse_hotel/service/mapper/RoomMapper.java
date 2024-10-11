@@ -5,7 +5,7 @@ import com.erika.eclipse_hotel.dto.RoomResponseDTO;
 import com.erika.eclipse_hotel.entity.Room;
 import org.mapstruct.Mapper;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface RoomMapper {
     Room toEntity(RoomRequestDTO roomRequestDTO);
     RoomResponseDTO toResponseDTO(Room room);

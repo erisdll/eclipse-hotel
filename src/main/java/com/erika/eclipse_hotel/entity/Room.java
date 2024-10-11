@@ -1,6 +1,7 @@
 package com.erika.eclipse_hotel.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "rooms")
+@Data
 public class Room {
 
     @Id
