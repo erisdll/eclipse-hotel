@@ -3,11 +3,13 @@ package com.erika.eclipse_hotel.entity;
 import com.erika.eclipse_hotel.enums.ReservationStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "reservations")
+@Data
 public class Reservation {
 
     @Id
