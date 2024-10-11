@@ -51,4 +51,10 @@ public class RoomController {
         roomService.deleteRoomById(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/occupied")
+    public ResponseEntity<List<RoomResponseDTO>> getOccupiedRooms() {
+        List<RoomResponseDTO> occupiedRooms = roomService.getOccupiedRooms();
+        return ResponseEntity.ok(occupiedRooms);
+    }
 }
