@@ -2,13 +2,12 @@ package com.erika.eclipse_hotel.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
+@Data
 public class CustomerRequestDTO {
-
     @NotBlank(message = "Name is mandatory")
     private String name;
 

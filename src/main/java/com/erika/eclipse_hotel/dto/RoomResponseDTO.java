@@ -1,12 +1,12 @@
 package com.erika.eclipse_hotel.dto;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 
-@Getter
-@Setter
+@Data
 public class RoomResponseDTO {
     private Long id;
     private String roomNumber;
