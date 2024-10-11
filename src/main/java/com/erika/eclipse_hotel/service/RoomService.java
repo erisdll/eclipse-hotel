@@ -60,4 +60,8 @@ public class RoomService {
         }
         roomRepository.deleteById(id);
     }
+
+    public List<RoomResponseDTO> getOccupiedRooms() {
+        return null;
+    }
 }

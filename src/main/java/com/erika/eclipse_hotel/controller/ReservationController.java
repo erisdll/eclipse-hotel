@@ -37,5 +37,6 @@ public class ReservationController {
         LocalDate toDate = LocalDate.parse(to);
 
         List<ReservationResponseDTO> reservationsByInterval = reservationService.getReservationsByInterval(fromDate, toDate);
+        return ResponseEntity.ok(reservationsByInterval);
     }
 }
