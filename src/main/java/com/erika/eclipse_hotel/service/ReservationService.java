@@ -13,6 +13,7 @@ import com.erika.eclipse_hotel.service.mapper.ReservationMapper;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -37,6 +38,7 @@ public class ReservationService {
     @Autowired
     private RoomRepository roomRepository;
 
+    @Transactional
     public ReservationResponseDTO createReservation(@Valid ReservationRequestDTO reservationRequestDTO) {
         LocalDateTime checkIn = LocalDateTime.parse(reservationRequestDTO.getCheckIn());
         LocalDateTime checkOut = LocalDateTime.parse(reservationRequestDTO.getCheckOut());
@@ -68,6 +70,7 @@ public class ReservationService {
         return reservationMapper.toResponseDTO(savedReservation);
     }
 
+    @Transactional
     public ReservationResponseDTO closeReservation(UUID id) {
         Optional<Reservation> optionalReservation = reservationRepository.findById(id);
 
@@ -86,6 +89,7 @@ public class ReservationService {
         return reservationMapper.toResponseDTO(reservation);
     }
 
+    @Transactional(readOnly = true)
     public List<ReservationResponseDTO> findReservationsByInterval(LocalDateTime fromDate, LocalDateTime toDate) {
         List<Reservation> reservations = reservationRepository.findByCheckInBetween(fromDate, toDate);
 

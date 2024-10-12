@@ -11,6 +11,7 @@ import com.erika.eclipse_hotel.service.mapper.RoomMapper;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -70,7 +71,8 @@ public class RoomService {
         roomRepository.deleteById(id);
     }
 
-    public List<RoomResponseDTO> getBookedRooms() {
+    @Transactional
+    public List<RoomResponseDTO> findBookedRooms() {
         LocalDateTime now = LocalDateTime.now();
 
         List<Reservation> currentReservations = reservationRepository.findByStatus(ReservationStatus.IN_USE);

@@ -54,7 +54,7 @@ public class RoomController {
 
     @GetMapping("/occupied")
     public ResponseEntity<List<RoomResponseDTO>> getBookedRooms() {
-        List<RoomResponseDTO> occupiedRooms = roomService.getBookedRooms();
+        List<RoomResponseDTO> occupiedRooms = roomService.findBookedRooms();
         return ResponseEntity.ok(occupiedRooms);
     }
 }
