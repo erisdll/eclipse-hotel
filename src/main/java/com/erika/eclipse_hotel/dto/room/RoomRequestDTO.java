@@ -1,12 +1,7 @@
-package com.erika.eclipse_hotel.dto;
+package com.erika.eclipse_hotel.dto.room;
 
-import com.erika.eclipse_hotel.entity.Room;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.math.BigDecimal;
 
 @Data
 public class RoomRequestDTO {

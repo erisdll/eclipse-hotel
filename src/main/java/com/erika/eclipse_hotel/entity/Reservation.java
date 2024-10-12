@@ -17,12 +17,11 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    //Decide fetch type
-    @ManyToOne //Decide fetch type
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
-    @ManyToOne //Decide fetch type
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
 
@@ -36,5 +35,5 @@ public class Reservation {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ReservationStatus status; //SCHEDULED, IN_USE, ABSENCE, FINISHED, CANCELED
+    private ReservationStatus status;
 }

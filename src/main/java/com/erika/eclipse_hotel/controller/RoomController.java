@@ -1,7 +1,7 @@
 package com.erika.eclipse_hotel.controller;
 
-import com.erika.eclipse_hotel.dto.RoomRequestDTO;
-import com.erika.eclipse_hotel.dto.RoomResponseDTO;
+import com.erika.eclipse_hotel.dto.room.RoomRequestDTO;
+import com.erika.eclipse_hotel.dto.room.RoomResponseDTO;
 import com.erika.eclipse_hotel.service.RoomService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class RoomController {
         return ResponseEntity.ok(room);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<RoomResponseDTO> updateRoomById(
             @PathVariable UUID id,
             @RequestBody
@@ -52,9 +52,9 @@ public class RoomController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/occupied")
+    @GetMapping("/currently-booked")
     public ResponseEntity<List<RoomResponseDTO>> getBookedRooms() {
-        List<RoomResponseDTO> occupiedRooms = roomService.getBookedRooms();
+        List<RoomResponseDTO> occupiedRooms = roomService.findBookedRooms();
         return ResponseEntity.ok(occupiedRooms);
     }
 }

@@ -1,26 +1,24 @@
 package com.erika.eclipse_hotel.controller;
 
-import com.erika.eclipse_hotel.dto.ReservationRequestDTO;
-import com.erika.eclipse_hotel.dto.ReservationResponseDTO;
+import com.erika.eclipse_hotel.dto.reservation.ReservationRequestDTO;
+import com.erika.eclipse_hotel.dto.reservation.ReservationResponseDTO;
 import com.erika.eclipse_hotel.service.ReservationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/reservations")
+@RequestMapping("/api/reservations")
 public class ReservationController {
 
     @Autowired
     private ReservationService reservationService;
 
-    @PostMapping("/")
+    @PostMapping("/create")
     public ResponseEntity<ReservationResponseDTO> createReservation(@RequestBody @Valid ReservationRequestDTO reservationRequestDTO) {
         ReservationResponseDTO responseDTO = reservationService.createReservation(reservationRequestDTO);
         return ResponseEntity.ok(responseDTO);
@@ -30,13 +28,12 @@ public class ReservationController {
     public ResponseEntity<ReservationResponseDTO> closeRegistration(@PathVariable UUID id) {
         ReservationResponseDTO closedReservation = reservationService.closeReservation(id);
         return ResponseEntity.ok(closedReservation);
-    };
+    }
+
+    ;
 
     @GetMapping("/by-interval")
-    public ResponseEntity<List<ReservationResponseDTO>> getReservationsByInterval(
-            @RequestParam("from") String from, @RequestParam("to") String to) {
-        LocalDateTime fromDate = LocalDateTime.parse(from);
-        LocalDateTime toDate = LocalDateTime.parse(to);
+    public ResponseEntity<List<ReservationResponseDTO>> getReservationsByInterval(@RequestParam("from") String fromDate, @RequestParam("to") String toDate) {
 
         List<ReservationResponseDTO> reservationsByInterval = reservationService.findReservationsByInterval(fromDate, toDate);
         return ResponseEntity.ok(reservationsByInterval);
