@@ -31,14 +31,14 @@ public class RoomController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RoomResponseDTO> getRoomById(@PathVariable Long id) {
+    public ResponseEntity<RoomResponseDTO> getRoomById(@PathVariable UUID id) {
         RoomResponseDTO room = roomService.getRoomById(id);
         return ResponseEntity.ok(room);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<RoomResponseDTO> updateRoomById(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestBody
             @Valid
             RoomRequestDTO roomRequestDTO) {
@@ -47,14 +47,14 @@ public class RoomController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteRoomById(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteRoomById(@PathVariable UUID id) {
         roomService.deleteRoomById(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/occupied")
-    public ResponseEntity<List<RoomResponseDTO>> getOccupiedRooms() {
-        List<RoomResponseDTO> occupiedRooms = roomService.getOccupiedRooms();
+    public ResponseEntity<List<RoomResponseDTO>> getBookedRooms() {
+        List<RoomResponseDTO> occupiedRooms = roomService.getBookedRooms();
         return ResponseEntity.ok(occupiedRooms);
     }
 }
