@@ -70,7 +70,16 @@ public class RoomService {
         roomRepository.deleteById(id);
     }
 
-    public List<RoomResponseDTO> getOccupiedRooms() {
-        return null;
+    public List<RoomResponseDTO> getBookedRooms() {
+        LocalDateTime now = LocalDateTime.now();
+
+        List<Reservation> currentReservations = reservationRepository.findByStatus(ReservationStatus.IN_USE);
+
+        return currentReservations.stream()
+                .filter(reservation -> reservation.getCheckIn().isBefore(now) && reservation.getCheckOut().isAfter(now))
+                .map(Reservation::getRoom)
+                .map(roomMapper::toResponseDTO)
+                .distinct()
+                .toList();
     }
 }
