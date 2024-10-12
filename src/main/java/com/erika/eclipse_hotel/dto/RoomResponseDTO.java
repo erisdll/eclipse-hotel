@@ -5,11 +5,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Data
 public class RoomResponseDTO {
-    private Long id;
+    private UUID id;
     private String roomNumber;
     private String type;
-    private BigDecimal price;
+    private String price;
 }

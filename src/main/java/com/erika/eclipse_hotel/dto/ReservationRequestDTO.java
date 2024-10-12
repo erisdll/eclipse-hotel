@@ -16,9 +16,9 @@ public class ReservationRequestDTO {
 
     @NotBlank(message = "Check-in Date cannot be empty.")
     @Pattern(regexp = "\\d{2}/\\d{2}/\\d{4} \\d{2}:\\d{2}:\\d{2}", message = "Check-in date format must be dd/MM/yyyy HH:mm:ss")
-    private LocalDateTime checkIn;
+    private String checkIn;
 
     @NotBlank(message = "Check-in Date cannot be empty.")
     @Pattern(regexp = "\\d{2}/\\d{2}/\\d{4} \\d{2}:\\d{2}:\\d{2}", message = "Check-in date format must be dd/MM/yyyy HH:mm:ss")
-    private LocalDateTime checkOut;
+    private String checkOut;
 }

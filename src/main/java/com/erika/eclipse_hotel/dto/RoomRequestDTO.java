@@ -17,5 +17,5 @@ public class RoomRequestDTO {
     private String type;
 
     @NotBlank(message = "Price is mandatory")
-    private BigDecimal price;
+    private String price;
 }
