@@ -9,7 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/reservations")
@@ -25,7 +27,7 @@ public class ReservationController {
     }
 
     @PatchMapping("/{id}/close")
-    public ResponseEntity<ReservationResponseDTO> closeRegistration(@PathVariable Long id) {
+    public ResponseEntity<ReservationResponseDTO> closeRegistration(@PathVariable UUID id) {
         ReservationResponseDTO closedReservation = reservationService.closeReservation(id);
         return ResponseEntity.ok(closedReservation);
     };
@@ -33,10 +35,10 @@ public class ReservationController {
     @GetMapping("/by-interval")
     public ResponseEntity<List<ReservationResponseDTO>> getReservationsByInterval(
             @RequestParam("from") String from, @RequestParam("to") String to) {
-        LocalDate fromDate = LocalDate.parse(from);
-        LocalDate toDate = LocalDate.parse(to);
+        LocalDateTime fromDate = LocalDateTime.parse(from);
+        LocalDateTime toDate = LocalDateTime.parse(to);
 
-        List<ReservationResponseDTO> reservationsByInterval = reservationService.getReservationsByInterval(fromDate, toDate);
+        List<ReservationResponseDTO> reservationsByInterval = reservationService.findReservationsByInterval(fromDate, toDate);
         return ResponseEntity.ok(reservationsByInterval);
     }
 }
