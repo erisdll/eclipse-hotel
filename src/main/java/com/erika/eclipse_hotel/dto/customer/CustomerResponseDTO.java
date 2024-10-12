@@ -1,10 +1,7 @@
-package com.erika.eclipse_hotel.dto;
+package com.erika.eclipse_hotel.dto.customer;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
