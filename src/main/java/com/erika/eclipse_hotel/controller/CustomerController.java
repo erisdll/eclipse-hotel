@@ -1,7 +1,7 @@
 package com.erika.eclipse_hotel.controller;
 
-import com.erika.eclipse_hotel.dto.CustomerRequestDTO;
-import com.erika.eclipse_hotel.dto.CustomerResponseDTO;
+import com.erika.eclipse_hotel.dto.customer.CustomerRequestDTO;
+import com.erika.eclipse_hotel.dto.customer.CustomerResponseDTO;
 import com.erika.eclipse_hotel.service.CustomerService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class CustomerController {
         return ResponseEntity.ok(customer);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<CustomerResponseDTO> updateCustomerById(
             @PathVariable UUID id,
             @RequestBody
