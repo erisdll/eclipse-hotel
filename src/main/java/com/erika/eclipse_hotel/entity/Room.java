@@ -6,6 +6,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "rooms")
@@ -14,9 +15,9 @@ public class Room {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private UUID id;
 
-    @Column(name = "room_number", nullable = false)
+    @Column(name = "room_number", nullable = false, unique = true)
     private String roomNumber;
 
     @Column(nullable = false)
