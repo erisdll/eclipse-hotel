@@ -3,9 +3,10 @@ package com.erika.eclipse_hotel.service;
 import com.erika.eclipse_hotel.dto.customer.CustomerRequestDTO;
 import com.erika.eclipse_hotel.dto.customer.CustomerResponseDTO;
 import com.erika.eclipse_hotel.entity.Customer;
+import com.erika.eclipse_hotel.exception.customer.CustomerAlreadyExistsException;
+import com.erika.eclipse_hotel.exception.customer.CustomerNotFoundException;
 import com.erika.eclipse_hotel.repository.CustomerRepository;
 import com.erika.eclipse_hotel.service.mapper.CustomerMapper;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,17 +26,27 @@ public class CustomerService {
     private CustomerRepository customerRepository;
 
     public CustomerResponseDTO createCustomer(CustomerRequestDTO request) {
-        log.info("Attempting to create new user. request: {}", request);
+        log.info("Trying to create new user. request: {}", request);
+
+        // Check if customer already exists and ensure uniqueness of name, email and phone
+        if (customerRepository.existsByName(request.getName())) {
+            throw new CustomerAlreadyExistsException("Name already exists.");
+        } else if (customerRepository.existsByEmail(request.getEmail())) {
+            throw new CustomerAlreadyExistsException("Email already exists.");
+        } else if (customerRepository.existsByPhone(request.getPhone())) {
+            throw new CustomerAlreadyExistsException("Phone already exists.");
+        }
+
         Customer customer = customerMapper.toEntity(request);
 
         customer = customerRepository.save(customer);
-        log.info("Created new user successfully. ID: {}", customer.getId());
+        log.info("Customer created successfully. ID: {}", customer.getId());
 
         return customerMapper.toResponseDTO(customer);
     }
 
     public List<CustomerResponseDTO> getAllCustomers() {
-        log.info("Attempting to fetch all customers.");
+        log.info("Trying to fetch all customers.");
         List<Customer> customers = customerRepository.findAll();
         log.info("Found {} customers.", customers.size());
 
@@ -45,17 +56,17 @@ public class CustomerService {
     }
 
     public CustomerResponseDTO getCustomerById(UUID id) {
-        log.info("Attempting to fetch customer. ID {}", id);
+        log.info("Trying to fetch customer. ID {}", id);
         Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Customer not found."));
+                .orElseThrow(() -> new CustomerNotFoundException("Customer not found."));
         log.info("Customer found. ID: {}", id);
         return customerMapper.toResponseDTO(customer);
     }
 
-    public CustomerResponseDTO updatedCustomerById(UUID id, CustomerRequestDTO request) {
-        log.info("Attempting to update customer. ID: {}", id);
+    public CustomerResponseDTO updateCustomerById(UUID id, CustomerRequestDTO request) {
+        log.info("Trying to update customer. ID: {}", id);
         Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Customer not found."));
+                .orElseThrow(() -> new CustomerNotFoundException("Customer not found."));
 
         log.debug("Updating customer details: {}", request);
         customer.setName(request.getName());
@@ -69,9 +80,9 @@ public class CustomerService {
     }
 
     public void deleteCustomerById(UUID id) {
-        log.info("Attempting to delete customer. ID: {}", id);
+        log.info("Trying to delete customer. ID: {}", id);
         if (!customerRepository.existsById(id)) {
-            throw new EntityNotFoundException("Customer not found.");
+            throw new CustomerNotFoundException("Customer not found.");
         }
         customerRepository.deleteById(id);
         log.info("Customer deleted successfully. ID: {}", id);

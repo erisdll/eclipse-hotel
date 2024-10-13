@@ -9,7 +9,7 @@ import com.erika.eclipse_hotel.enums.ReservationStatus;
 import com.erika.eclipse_hotel.exception.reservation.ReservationDateIntervalException;
 import com.erika.eclipse_hotel.exception.reservation.ReservationCreationException;
 import com.erika.eclipse_hotel.exception.reservation.ReservationStateException;
-import com.erika.eclipse_hotel.exception.RoomNotAvailableException;
+import com.erika.eclipse_hotel.exception.room.RoomNotAvailableException;
 import com.erika.eclipse_hotel.repository.CustomerRepository;
 import com.erika.eclipse_hotel.repository.ReservationRepository;
 import com.erika.eclipse_hotel.repository.RoomRepository;
@@ -47,7 +47,7 @@ public class ReservationService {
 
     @Transactional
     public ReservationResponseDTO createReservation(@Valid ReservationRequestDTO request) {
-        log.info("Attempting to create reservation for room: {} and customer {}",
+        log.info("Trying to create reservation for room: {} and customer {}",
                 request.getRoomId(),
                 request.getCustomerId()
         );
@@ -99,7 +99,7 @@ public class ReservationService {
 
     @Transactional
     public ReservationResponseDTO closeReservation(UUID id) {
-        log.info("Attempting to close reservation. ID: {}", id);
+        log.info("Trying to close reservation. ID: {}", id);
 
         // Verify reservation existence and status
         Reservation reservation = reservationRepository.findById(id)
@@ -119,7 +119,7 @@ public class ReservationService {
 
     @Transactional(readOnly = true)
     public List<ReservationResponseDTO> findReservationsByInterval(String fromDate, String toDate) {
-        log.info("Attempting to find reservations by date interval. From: {}, to {}", fromDate, toDate);
+        log.info("Trying to find reservations by date interval. From: {}, to {}", fromDate, toDate);
 
         // Parse date strings to LocalDateTime and verify interval integrity
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");

@@ -42,7 +42,7 @@ public class CustomerController {
             @RequestBody
             @Valid
             CustomerRequestDTO customerRequestDTO) {
-        CustomerResponseDTO responseDTO = customerService.updatedCustomerById(id, customerRequestDTO);
+        CustomerResponseDTO responseDTO = customerService.updateCustomerById(id, customerRequestDTO);
         return ResponseEntity.ok(responseDTO);
     }
 
