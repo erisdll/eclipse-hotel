@@ -84,7 +84,7 @@ public class ReservationService {
             throw new RoomNotAvailableException("Room not available during specified period.");
         }
 
-        //Builds new reservation object and saves to DB if request passes validations.
+        // Create and save reservation
         Reservation reservation = new Reservation();
         reservation.setCustomer(customer.get());
         reservation.setRoom(room.get());
@@ -101,14 +101,15 @@ public class ReservationService {
     public ReservationResponseDTO closeReservation(UUID id) {
         log.info("Attempting to close reservation. ID: {}", id);
 
+        // Verify reservation existence and status
         Reservation reservation = reservationRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Reservation not found"));
-
         if (reservation.getStatus() != ReservationStatus.IN_USE) {
             log.warn("Only reservations currently in use can be closed.");
             throw new ReservationStateException("Only reservations currently in use can be closed.");
         }
 
+        // Close reservation and save to DB
         reservation.setStatus(ReservationStatus.FINISHED);
         reservationRepository.save(reservation);
         log.info("Reservation closed successfully. ID: {}", id);
@@ -120,7 +121,7 @@ public class ReservationService {
     public List<ReservationResponseDTO> findReservationsByInterval(String fromDate, String toDate) {
         log.info("Attempting to find reservations by date interval. From: {}, to {}", fromDate, toDate);
 
-        //Parse date strings to LocalDateTime and verify interval integrity
+        // Parse date strings to LocalDateTime and verify interval integrity
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDateTime startDateTime = LocalDate.parse(fromDate, formatter).atStartOfDay();
         LocalDateTime endDateTime = LocalDate.parse(toDate, formatter).atTime(23, 59, 59);
@@ -129,6 +130,7 @@ public class ReservationService {
             throw new ReservationDateIntervalException("Invalid date interval. Start date must be before end date.");
         }
 
+        // Find reservations by date interval and map to DTO
         List<Reservation> reservations = reservationRepository.findByCheckInBetween(startDateTime, endDateTime);
         log.info("Reservations found by date interval.");
 
