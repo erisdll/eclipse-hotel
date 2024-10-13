@@ -47,7 +47,7 @@ public class CustomerService {
     public CustomerResponseDTO getCustomerById(UUID id) {
         log.info("Attempting to fetch customer. ID {}", id);
         Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Customer not found. ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Customer not found."));
         log.info("Customer found. ID: {}", id);
         return customerMapper.toResponseDTO(customer);
     }
@@ -55,7 +55,7 @@ public class CustomerService {
     public CustomerResponseDTO updatedCustomerById(UUID id, CustomerRequestDTO request) {
         log.info("Attempting to update customer. ID: {}", id);
         Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Customer not found. ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Customer not found."));
 
         log.debug("Updating customer details: {}", request);
         customer.setName(request.getName());
@@ -71,7 +71,7 @@ public class CustomerService {
     public void deleteCustomerById(UUID id) {
         log.info("Attempting to delete customer. ID: {}", id);
         if (!customerRepository.existsById(id)) {
-            throw new EntityNotFoundException("Customer not found. ID: " + id);
+            throw new EntityNotFoundException("Customer not found.");
         }
         customerRepository.deleteById(id);
         log.info("Customer deleted successfully. ID: {}", id);
