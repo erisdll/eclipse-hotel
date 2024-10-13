@@ -12,5 +12,8 @@ public interface ReservationMapper {
 
     @Mapping(target = "customerId", source = "customer.id")
     @Mapping(target = "roomId", source = "room.id")
+    @Mapping(target = "customerName", source = "customer.name")
+    @Mapping(target = "roomNumber", source = "room.roomNumber")
+    @Mapping(target = "roomType", source = "room.type")
     ReservationResponseDTO toResponseDTO(Reservation reservation);
 }

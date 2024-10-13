@@ -1,7 +1,8 @@
 package com.erika.eclipse_hotel.controller;
 
-import com.erika.eclipse_hotel.dto.room.RoomRequestDTO;
+import com.erika.eclipse_hotel.dto.room.RoomCreateRequestDTO;
 import com.erika.eclipse_hotel.dto.room.RoomResponseDTO;
+import com.erika.eclipse_hotel.dto.room.RoomUpdateRequestDTO;
 import com.erika.eclipse_hotel.service.RoomService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +20,8 @@ public class RoomController {
     private RoomService roomService;
 
     @PostMapping
-    public ResponseEntity<RoomResponseDTO> createRoom(@RequestBody @Valid RoomRequestDTO roomRequestDTO) {
-        RoomResponseDTO room = roomService.createRoom(roomRequestDTO);
+    public ResponseEntity<RoomResponseDTO> createRoom(@RequestBody @Valid RoomCreateRequestDTO roomCreateRequestDTO) {
+        RoomResponseDTO room = roomService.createRoom(roomCreateRequestDTO);
         return ResponseEntity.ok(room);
     }
 
@@ -41,8 +42,8 @@ public class RoomController {
             @PathVariable UUID id,
             @RequestBody
             @Valid
-            RoomRequestDTO roomRequestDTO) {
-        RoomResponseDTO responseDTO = roomService.updateRoomById(id, roomRequestDTO);
+            RoomUpdateRequestDTO roomUpdateRequestDTO) {
+        RoomResponseDTO responseDTO = roomService.updateRoomById(id, roomUpdateRequestDTO);
         return ResponseEntity.ok(responseDTO);
     }
 

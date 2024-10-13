@@ -1,7 +1,8 @@
 package com.erika.eclipse_hotel.service;
 
-import com.erika.eclipse_hotel.dto.customer.CustomerRequestDTO;
+import com.erika.eclipse_hotel.dto.customer.CustomerCreateRequestDTO;
 import com.erika.eclipse_hotel.dto.customer.CustomerResponseDTO;
+import com.erika.eclipse_hotel.dto.customer.CustomerUpdateRequestDTO;
 import com.erika.eclipse_hotel.entity.Customer;
 import com.erika.eclipse_hotel.exception.customer.CustomerAlreadyExistsException;
 import com.erika.eclipse_hotel.exception.customer.CustomerNotFoundException;
@@ -25,7 +26,7 @@ public class CustomerService {
     @Autowired
     private CustomerRepository customerRepository;
 
-    public CustomerResponseDTO createCustomer(CustomerRequestDTO request) {
+    public CustomerResponseDTO createCustomer(CustomerCreateRequestDTO request) {
         log.info("Trying to create new user. request: {}", request);
 
         // Check if customer already exists and ensure uniqueness of name, email and phone
@@ -63,15 +64,22 @@ public class CustomerService {
         return customerMapper.toResponseDTO(customer);
     }
 
-    public CustomerResponseDTO updateCustomerById(UUID id, CustomerRequestDTO request) {
+    public CustomerResponseDTO updateCustomerById(UUID id, CustomerUpdateRequestDTO request) {
         log.info("Trying to update customer. ID: {}", id);
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new CustomerNotFoundException("Customer not found."));
 
         log.debug("Updating customer details: {}", request);
-        customer.setName(request.getName());
-        customer.setEmail(request.getEmail());
-        customer.setPhone(request.getPhone());
+        // Update only non-null fields from the DTO
+        if (request.getName() != null) {
+            customer.setName(request.getName());
+        }
+        if (request.getEmail() != null) {
+            customer.setEmail(request.getEmail());
+        }
+        if (request.getPhone() != null) {
+            customer.setPhone(request.getPhone());
+        }
 
         Customer updatedCustomer = customerRepository.save(customer);
         log.info("Customer updated successfully. ID: {}", id);

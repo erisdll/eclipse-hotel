@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class RoomRequestDTO {
+public class RoomCreateRequestDTO {
     @NotBlank(message = "Room number is mandatory")
     private String roomNumber;
 

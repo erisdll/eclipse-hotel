@@ -11,6 +11,9 @@ public class ReservationResponseDTO {
     private UUID id;
     private String customerId;
     private String roomId;
+    private String customerName;
+    private String roomNumber;
+    private String roomType;
     private String checkIn;
     private String checkOut;
     private ReservationStatus status;

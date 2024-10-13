@@ -1,7 +1,8 @@
 package com.erika.eclipse_hotel.service;
 
-import com.erika.eclipse_hotel.dto.room.RoomRequestDTO;
+import com.erika.eclipse_hotel.dto.room.RoomCreateRequestDTO;
 import com.erika.eclipse_hotel.dto.room.RoomResponseDTO;
+import com.erika.eclipse_hotel.dto.room.RoomUpdateRequestDTO;
 import com.erika.eclipse_hotel.entity.Reservation;
 import com.erika.eclipse_hotel.entity.Room;
 import com.erika.eclipse_hotel.enums.ReservationStatus;
@@ -35,7 +36,7 @@ public class RoomService {
     @Autowired
     private ReservationRepository reservationRepository;
 
-    public RoomResponseDTO createRoom(RoomRequestDTO request) {
+    public RoomResponseDTO createRoom(RoomCreateRequestDTO request) {
         log.info("Trying to create new room: {}", request);
 
         if (roomRepository.existsByRoomNumber(request.getRoomNumber())) {
@@ -69,15 +70,21 @@ public class RoomService {
         return roomMapper.toResponseDTO(room);
     }
 
-    public RoomResponseDTO updateRoomById(UUID id, RoomRequestDTO request) {
+    public RoomResponseDTO updateRoomById(UUID id, RoomUpdateRequestDTO request) {
         log.info("Trying to update room. ID: {}", id);
         Room room = roomRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Room not found."));
 
         log.debug("Updating room details: {}", request);
-        room.setRoomNumber(request.getRoomNumber());
-        room.setType(request.getType());
-        room.setPrice(new BigDecimal(request.getPrice()));
+        if (request.getRoomNumber() != null) {
+            room.setRoomNumber(request.getRoomNumber());
+        }
+        if (request.getType() != null) {
+            room.setType(request.getType());
+        }
+        if (request.getPrice() != null) {
+            room.setPrice(new BigDecimal(request.getPrice()));
+        }
 
         Room updatedRoom = roomRepository.save(room);
         return roomMapper.toResponseDTO(updatedRoom);
@@ -98,10 +105,11 @@ public class RoomService {
         LocalDateTime now = LocalDateTime.now();
         log.info("Trying to fetch currently booked rooms.");
 
-        List<Reservation> currentReservations = reservationRepository.findByStatus(ReservationStatus.IN_USE);
-        log.info("Found {} currently active reservations.", currentReservations.size());
+        List<Reservation> currentReservations = reservationRepository.findByStatusOrCheckInBefore(ReservationStatus.IN_USE, now);
+        log.info("Found {} rooms currently booked.", currentReservations.size());
 
         return currentReservations.stream()
+                .distinct()
                 .map(Reservation::getRoom)
                 .map(roomMapper::toResponseDTO)
                 .collect(Collectors.toList());

@@ -1,7 +1,8 @@
 package com.erika.eclipse_hotel.controller;
 
-import com.erika.eclipse_hotel.dto.customer.CustomerRequestDTO;
+import com.erika.eclipse_hotel.dto.customer.CustomerCreateRequestDTO;
 import com.erika.eclipse_hotel.dto.customer.CustomerResponseDTO;
+import com.erika.eclipse_hotel.dto.customer.CustomerUpdateRequestDTO;
 import com.erika.eclipse_hotel.service.CustomerService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +20,8 @@ public class CustomerController {
     private CustomerService customerService;
 
     @PostMapping
-    public ResponseEntity<CustomerResponseDTO> createCustomer(@RequestBody @Valid CustomerRequestDTO customerRequestDTO) {
-        CustomerResponseDTO customer = customerService.createCustomer(customerRequestDTO);
+    public ResponseEntity<CustomerResponseDTO> createCustomer(@RequestBody @Valid CustomerCreateRequestDTO customerCreateRequestDTO) {
+        CustomerResponseDTO customer = customerService.createCustomer(customerCreateRequestDTO);
         return ResponseEntity.ok(customer);
     }
 
@@ -39,10 +40,8 @@ public class CustomerController {
     @PatchMapping("/{id}")
     public ResponseEntity<CustomerResponseDTO> updateCustomerById(
             @PathVariable UUID id,
-            @RequestBody
-            @Valid
-            CustomerRequestDTO customerRequestDTO) {
-        CustomerResponseDTO responseDTO = customerService.updateCustomerById(id, customerRequestDTO);
+            @RequestBody @Valid CustomerUpdateRequestDTO customerUpdateRequestDTO) {
+        CustomerResponseDTO responseDTO = customerService.updateCustomerById(id, customerUpdateRequestDTO);
         return ResponseEntity.ok(responseDTO);
     }
 

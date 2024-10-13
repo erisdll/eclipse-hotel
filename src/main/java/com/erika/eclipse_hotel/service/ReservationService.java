@@ -61,7 +61,8 @@ public class ReservationService {
         if (checkIn.isAfter((checkOut))) {
             log.error("Check-out date must be after check-in date.");
             throw new ReservationDateIntervalException("Check-out date must be after check-in date.");
-        } else if (checkIn.isBefore(LocalDateTime.now())) {
+        }
+        if (checkIn.isBefore(LocalDateTime.now())) {
             log.error("Check-in date must be in the future.");
             throw new ReservationDateIntervalException("Check-in date must be in the future.");
         }
@@ -72,7 +73,8 @@ public class ReservationService {
         if (customer.isEmpty()) {
             log.error("Customer not found.");
             throw new ReservationCreationException("Customer not found.");
-        } else if (room.isEmpty()) {
+        }
+        if (room.isEmpty()) {
             log.error("Room not found");
             throw new ReservationCreationException("Room not found");
         }
