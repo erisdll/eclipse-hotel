@@ -20,8 +20,15 @@ public class ReservationController {
     private ReservationService reservationService;
 
     @PostMapping("/create")
-    public CompletableFuture<ReservationResponseDTO> createReservation(@RequestBody @Valid ReservationRequestDTO reservationRequestDTO) {
-        return reservationService.createReservation(reservationRequestDTO);
+    public CompletableFuture<ResponseEntity<ReservationResponseDTO>> createReservation(@RequestBody @Valid ReservationRequestDTO reservationRequestDTO) {
+        return reservationService.createReservation(reservationRequestDTO).thenApply(
+                reservationResponseDTO -> {
+                    UUID reservationId = reservationResponseDTO.getId();
+                    return ResponseEntity
+                            .created(java.net.URI.create("/api/reservations/" + reservationId))
+                            .body(reservationResponseDTO);
+                }
+        );
     }
 
     @PatchMapping("/{id}/close")
