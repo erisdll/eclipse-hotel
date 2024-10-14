@@ -42,7 +42,7 @@ A estrutura do projeto segue a divisão por camadas:
   - `Customer`, `Room`, `Reservation`: Definem os modelos para clientes, quartos e reservas, respectivamente.
 
 - **Exceções**: Contém classes para tratar os diferentes tipos de exceções que podem ocorrer na aplicação.
-  - O projeto conta com um **GlobalExceptionHandler**, que intercepta exceções globais e retorna respostas padronizadas, facilitando o tratamento centralizado de erros na aplicação.
+  - O projeto conta com um `GlobalExceptionHandler`, que intercepta exceções globais e retorna respostas padronizadas, facilitando o tratamento centralizado de erros na aplicação.
   - Também possui Exceções customizadas como `CustomerAlreadyExistsException`, `RoomNotAvailableException`, e `ReservationStateException`, que são usadas para fornecer respostas claras e específicas.
  
 
