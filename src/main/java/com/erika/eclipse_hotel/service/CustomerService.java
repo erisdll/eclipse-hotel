@@ -35,9 +35,11 @@ public class CustomerService {
         // Check if customer already exists and ensure uniqueness of name, email and phone
         if (customerRepository.existsByName(request.getName())) {
             throw new CustomerAlreadyExistsException("Name already exists.");
-        } else if (customerRepository.existsByEmail(request.getEmail())) {
+        }
+        if (customerRepository.existsByEmail(request.getEmail())) {
             throw new CustomerAlreadyExistsException("Email already exists.");
-        } else if (customerRepository.existsByPhone(request.getPhone())) {
+        }
+        if (customerRepository.existsByPhone(request.getPhone())) {
             throw new CustomerAlreadyExistsException("Phone already exists.");
         }
 
