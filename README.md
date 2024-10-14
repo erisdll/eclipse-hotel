@@ -41,7 +41,15 @@ A estrutura do projeto segue a divisão por camadas:
 - **Entidades**: Representações do modelo de dados.
   - `Customer`, `Room`, `Reservation`: Definem os modelos para clientes, quartos e reservas, respectivamente.
 
-- **Exceções Customizadas**: Exceções específicas como `CustomerAlreadyExistsException`, `RoomNotAvailableException`, e `ReservationStateException` para tratamentos personalizados de erros.
+- **Exceções**: Contém classes para tratar os diferentes tipos de exceções que podem ocorrer na aplicação.
+  - O projeto conta com um **GlobalExceptionHandler**, que intercepta exceções globais e retorna respostas padronizadas, facilitando o tratamento centralizado de erros na aplicação.
+  - Também possui Exceções customizadas como `CustomerAlreadyExistsException`, `RoomNotAvailableException`, e `ReservationStateException`, que são usadas para fornecer respostas claras e específicas.
+ 
+
+- **Configurações**: A camada de configuração contém classes que definem configurações globais e comportamentos específicos da aplicação.
+  - `SwaggerConfig`: Configura o SpringDoc para gerar a documentação da API automaticamente.
+  - `AsyncConfig`: Configura um **Executor** personalizado, garantindo o suporte para operações assíncronas e otimizando o desempenho de requisições que envolvem consultas ao banco de dados e processamento de dados.
+
 
 ## Configuração e Execução
 
