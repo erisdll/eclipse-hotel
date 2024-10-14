@@ -77,7 +77,6 @@ public class CustomerService {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new CustomerNotFoundException("Customer not found."));
 
-        log.debug("Updating customer details: {}", request);
         // Update only non-null fields from the DTO
         if (request.getName() != null) {
             customer.setName(request.getName());

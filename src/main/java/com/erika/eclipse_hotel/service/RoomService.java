@@ -11,7 +11,6 @@ import com.erika.eclipse_hotel.exception.room.RoomNotFoundException;
 import com.erika.eclipse_hotel.repository.ReservationRepository;
 import com.erika.eclipse_hotel.repository.RoomRepository;
 import com.erika.eclipse_hotel.service.mapper.RoomMapper;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -76,9 +75,9 @@ public class RoomService {
     public CompletableFuture<RoomResponseDTO> updateRoomById(UUID id, RoomUpdateRequestDTO request) {
         log.info("Trying to update room. ID: {}", id);
         Room room = roomRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Room not found."));
+                .orElseThrow(() -> new RoomNotFoundException("Room not found."));
 
-        log.debug("Updating room details: {}", request);
+        // Update only non-null fields from the DTO
         if (request.getRoomNumber() != null) {
             room.setRoomNumber(request.getRoomNumber());
         }
@@ -90,6 +89,7 @@ public class RoomService {
         }
 
         Room updatedRoom = roomRepository.save(room);
+        log.info("Room updated successfully. ID: {}", id);
         return CompletableFuture.completedFuture(roomMapper.toResponseDTO(updatedRoom));
     }
 
@@ -97,7 +97,7 @@ public class RoomService {
         log.info("Trying to delete room. ID: {}", id);
         if (!roomRepository.existsById(id)) {
             log.error("Room not found. ID: {}", id);
-            throw new EntityNotFoundException("Room not found.");
+            throw new RoomNotFoundException("Room not found.");
         }
         roomRepository.deleteById(id);
         log.info("Room deleted successfully. ID: {}", id);

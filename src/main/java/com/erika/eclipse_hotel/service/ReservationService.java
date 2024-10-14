@@ -8,13 +8,13 @@ import com.erika.eclipse_hotel.entity.Room;
 import com.erika.eclipse_hotel.enums.ReservationStatus;
 import com.erika.eclipse_hotel.exception.reservation.ReservationDateIntervalException;
 import com.erika.eclipse_hotel.exception.reservation.ReservationCreationException;
+import com.erika.eclipse_hotel.exception.reservation.ReservationNotFoundException;
 import com.erika.eclipse_hotel.exception.reservation.ReservationStateException;
 import com.erika.eclipse_hotel.exception.room.RoomNotAvailableException;
 import com.erika.eclipse_hotel.repository.CustomerRepository;
 import com.erika.eclipse_hotel.repository.ReservationRepository;
 import com.erika.eclipse_hotel.repository.RoomRepository;
 import com.erika.eclipse_hotel.service.mapper.ReservationMapper;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,7 +109,7 @@ public class ReservationService {
 
         // Verify reservation existence and status
         Reservation reservation = reservationRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Reservation not found"));
+                .orElseThrow(() -> new ReservationNotFoundException("Reservation not found"));
         if (reservation.getStatus() != ReservationStatus.IN_USE) {
             log.warn("Only reservations currently in use can be closed.");
             throw new ReservationStateException("Only reservations currently in use can be closed.");

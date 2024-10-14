@@ -22,8 +22,8 @@ public class RoomController {
     private RoomService roomService;
 
     @PostMapping
-    public CompletableFuture<ResponseEntity<RoomResponseDTO>> createCustomer(@RequestBody @Valid RoomCreateRequestDTO customerCreateRequestDTO) {
-        return roomService.createRoom(new RoomCreateRequestDTO())
+    public CompletableFuture<ResponseEntity<RoomResponseDTO>> createRoom(@RequestBody @Valid RoomCreateRequestDTO roomCreateRequestDTO) {
+        return roomService.createRoom(roomCreateRequestDTO)
                 .thenApply(roomResponseDTO -> {
                     UUID roomId = roomResponseDTO.getId();
                     return ResponseEntity
