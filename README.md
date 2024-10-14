@@ -18,7 +18,7 @@
 ## Funcionalidades
 
 - **Gerenciamento de Clientes**: Adição, consulta, atualização e exclusão de clientes.
-- **Gerenciamento de Quartos**: Criação, consulta, atualização e remoção de quartos do hotel.
+- **Gerenciamento de Quartos**: Criação, consulta, atualização, remoção de quartos e consulta de quartos ocupados do hotel.
 - **Gerenciamento de Reservas**: Registro de reservas para clientes, fechamento de reservas e consulta por intervalo de datas.
 
 ## Arquitetura do Projeto
