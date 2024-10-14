@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/api/rooms")
@@ -20,42 +22,42 @@ public class RoomController {
     private RoomService roomService;
 
     @PostMapping
-    public ResponseEntity<RoomResponseDTO> createRoom(@RequestBody @Valid RoomCreateRequestDTO roomCreateRequestDTO) {
-        RoomResponseDTO room = roomService.createRoom(roomCreateRequestDTO);
-        return ResponseEntity.ok(room);
+    public CompletableFuture<ResponseEntity<RoomResponseDTO>> createRoom(@RequestBody @Valid RoomCreateRequestDTO roomCreateRequestDTO) {
+        return roomService.createRoom(roomCreateRequestDTO)
+                .thenApply(roomResponseDTO -> {
+                    UUID roomId = roomResponseDTO.getId();
+                    return ResponseEntity
+                            .created(URI.create("/api/rooms/" + roomId))
+                            .body(roomResponseDTO);
+                });
     }
 
     @GetMapping
-    public ResponseEntity<List<RoomResponseDTO>> getAllRooms() {
-        List<RoomResponseDTO> rooms = roomService.getAllRooms();
-        return ResponseEntity.ok(rooms);
+    public CompletableFuture<ResponseEntity<List<RoomResponseDTO>>> getAllRooms() {
+        return roomService.getAllRooms().thenApply(ResponseEntity::ok);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RoomResponseDTO> getRoomById(@PathVariable UUID id) {
-        RoomResponseDTO room = roomService.getRoomById(id);
-        return ResponseEntity.ok(room);
+    public CompletableFuture<ResponseEntity<RoomResponseDTO>> getRoomById(@PathVariable UUID id) {
+        return roomService.getRoomById(id).thenApply(ResponseEntity::ok);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<RoomResponseDTO> updateRoomById(
+    public CompletableFuture<ResponseEntity<RoomResponseDTO>> updateRoomById(
             @PathVariable UUID id,
             @RequestBody
             @Valid
             RoomUpdateRequestDTO roomUpdateRequestDTO) {
-        RoomResponseDTO responseDTO = roomService.updateRoomById(id, roomUpdateRequestDTO);
-        return ResponseEntity.ok(responseDTO);
+        return roomService.updateRoomById(id, roomUpdateRequestDTO).thenApply(ResponseEntity::ok);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteRoomById(@PathVariable UUID id) {
-        roomService.deleteRoomById(id);
-        return ResponseEntity.noContent().build();
+    public CompletableFuture<ResponseEntity<String>> deleteRoomById(@PathVariable UUID id) {
+        return roomService.deleteRoomById(id).thenApply(ResponseEntity::ok);
     }
 
     @GetMapping("/currently-booked")
-    public ResponseEntity<List<RoomResponseDTO>> getBookedRooms() {
-        List<RoomResponseDTO> occupiedRooms = roomService.findBookedRooms();
-        return ResponseEntity.ok(occupiedRooms);
+    public CompletableFuture<ResponseEntity<List<RoomResponseDTO>>> getBookedRooms() {
+        return roomService.findBookedRooms().thenApply(ResponseEntity::ok);
     }
 }

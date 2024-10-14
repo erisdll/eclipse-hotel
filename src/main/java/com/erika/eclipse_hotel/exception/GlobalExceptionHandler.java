@@ -5,6 +5,7 @@ import com.erika.eclipse_hotel.exception.customer.CustomerAlreadyExistsException
 import com.erika.eclipse_hotel.exception.customer.CustomerNotFoundException;
 import com.erika.eclipse_hotel.exception.reservation.ReservationCreationException;
 import com.erika.eclipse_hotel.exception.reservation.ReservationDateIntervalException;
+import com.erika.eclipse_hotel.exception.reservation.ReservationNotFoundException;
 import com.erika.eclipse_hotel.exception.reservation.ReservationStateException;
 import com.erika.eclipse_hotel.exception.room.RoomAlreadyExistsException;
 import com.erika.eclipse_hotel.exception.room.RoomNotAvailableException;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+
 import java.util.Objects;
 
 @Slf4j
@@ -31,6 +34,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDTO> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
         log.error("Validation error: {}", exception.getMessage());
         return buildResponse("Validation Error", Objects.requireNonNull(exception.getBindingResult().getFieldError()).getDefaultMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponseDTO> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException exception) {
+        log.error("Validation mismatch error: {}", exception.getMessage());
+        return buildResponse("Validation Error", "Invalid parameter type (check UUID length)", HttpStatus.BAD_REQUEST);
     }
 
     // Customer exceptions
@@ -61,6 +70,11 @@ public class GlobalExceptionHandler {
     }
 
     // Reservation exceptions
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponseDTO> handleReservationNotFoundException(ReservationNotFoundException exception) {
+        return buildResponse("Not Found", exception.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(ReservationCreationException.class)
     public ResponseEntity<ErrorResponseDTO> handleReservationCreationException(ReservationCreationException exception) {
         return buildResponse("Reservation Creation Error", exception.getMessage(), HttpStatus.BAD_REQUEST);

@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/api/customers")
@@ -20,34 +22,35 @@ public class CustomerController {
     private CustomerService customerService;
 
     @PostMapping
-    public ResponseEntity<CustomerResponseDTO> createCustomer(@RequestBody @Valid CustomerCreateRequestDTO customerCreateRequestDTO) {
-        CustomerResponseDTO customer = customerService.createCustomer(customerCreateRequestDTO);
-        return ResponseEntity.ok(customer);
+    public CompletableFuture<ResponseEntity<CustomerResponseDTO>> createCustomer(@RequestBody @Valid CustomerCreateRequestDTO customerCreateRequestDTO) {
+        return customerService.createCustomer(customerCreateRequestDTO)
+                .thenApply(customerResponseDTO -> {
+                    UUID customerId = customerResponseDTO.getId();
+                    return ResponseEntity
+                            .created(URI.create("/api/customers/" + customerId))
+                            .body(customerResponseDTO);
+                });
     }
 
     @GetMapping
-    public ResponseEntity<List<CustomerResponseDTO>> getAllCustomers() {
-        List<CustomerResponseDTO> customers = customerService.getAllCustomers();
-        return ResponseEntity.ok(customers);
+    public CompletableFuture<ResponseEntity<List<CustomerResponseDTO>>> getAllCustomers() {
+        return customerService.getAllCustomers().thenApply(ResponseEntity::ok);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CustomerResponseDTO> getCustomerById(@PathVariable UUID id) {
-        CustomerResponseDTO customer = customerService.getCustomerById(id);
-        return ResponseEntity.ok(customer);
+    public CompletableFuture<ResponseEntity<CustomerResponseDTO>> getCustomerById(@PathVariable UUID id) {
+        return customerService.getCustomerById(id).thenApply(ResponseEntity::ok);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<CustomerResponseDTO> updateCustomerById(
+    public CompletableFuture<ResponseEntity<CustomerResponseDTO>> updateCustomerById(
             @PathVariable UUID id,
             @RequestBody @Valid CustomerUpdateRequestDTO customerUpdateRequestDTO) {
-        CustomerResponseDTO responseDTO = customerService.updateCustomerById(id, customerUpdateRequestDTO);
-        return ResponseEntity.ok(responseDTO);
+        return customerService.updateCustomerById(id, customerUpdateRequestDTO).thenApply(ResponseEntity::ok);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCustomerById(@PathVariable UUID id) {
-        customerService.deleteCustomerById(id);
-        return ResponseEntity.noContent().build();
+    public CompletableFuture<ResponseEntity<String>> deleteCustomerById(@PathVariable UUID id) {
+        return customerService.deleteCustomerById(id).thenApply(ResponseEntity::ok);
     }
 }

@@ -8,16 +8,17 @@ import com.erika.eclipse_hotel.entity.Room;
 import com.erika.eclipse_hotel.enums.ReservationStatus;
 import com.erika.eclipse_hotel.exception.reservation.ReservationDateIntervalException;
 import com.erika.eclipse_hotel.exception.reservation.ReservationCreationException;
+import com.erika.eclipse_hotel.exception.reservation.ReservationNotFoundException;
 import com.erika.eclipse_hotel.exception.reservation.ReservationStateException;
 import com.erika.eclipse_hotel.exception.room.RoomNotAvailableException;
 import com.erika.eclipse_hotel.repository.CustomerRepository;
 import com.erika.eclipse_hotel.repository.ReservationRepository;
 import com.erika.eclipse_hotel.repository.RoomRepository;
 import com.erika.eclipse_hotel.service.mapper.ReservationMapper;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +28,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,8 +47,9 @@ public class ReservationService {
     @Autowired
     private RoomRepository roomRepository;
 
+    @Async
     @Transactional
-    public ReservationResponseDTO createReservation(@Valid ReservationRequestDTO request) {
+    public CompletableFuture<ReservationResponseDTO> createReservation(@Valid ReservationRequestDTO request) {
         log.info("Trying to create reservation for room: {} and customer {}",
                 request.getRoomId(),
                 request.getCustomerId()
@@ -96,16 +99,17 @@ public class ReservationService {
         Reservation savedReservation = reservationRepository.save(reservation);
 
         log.info("Reservation created successfully. ID: {}",savedReservation.getId());
-        return reservationMapper.toResponseDTO(savedReservation);
+        return CompletableFuture.completedFuture(reservationMapper.toResponseDTO(savedReservation));
     }
 
+    @Async
     @Transactional
-    public ReservationResponseDTO closeReservation(UUID id) {
+    public CompletableFuture<ReservationResponseDTO> closeReservation(UUID id) {
         log.info("Trying to close reservation. ID: {}", id);
 
         // Verify reservation existence and status
         Reservation reservation = reservationRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Reservation not found"));
+                .orElseThrow(() -> new ReservationNotFoundException("Reservation not found"));
         if (reservation.getStatus() != ReservationStatus.IN_USE) {
             log.warn("Only reservations currently in use can be closed.");
             throw new ReservationStateException("Only reservations currently in use can be closed.");
@@ -116,11 +120,12 @@ public class ReservationService {
         reservationRepository.save(reservation);
         log.info("Reservation closed successfully. ID: {}", id);
 
-        return reservationMapper.toResponseDTO(reservation);
+        return CompletableFuture.completedFuture(reservationMapper.toResponseDTO(reservation));
     }
 
+    @Async
     @Transactional(readOnly = true)
-    public List<ReservationResponseDTO> findReservationsByInterval(String fromDate, String toDate) {
+    public CompletableFuture<List<ReservationResponseDTO>> findReservationsByInterval(String fromDate, String toDate) {
         log.info("Trying to find reservations by date interval. From: {}, to {}", fromDate, toDate);
 
         // Parse date strings to LocalDateTime and verify interval integrity
@@ -132,14 +137,14 @@ public class ReservationService {
             throw new ReservationDateIntervalException("Invalid date interval. Start date must be before end date.");
         }
 
-        // Find reservations by date interval and map to DTO
+        // Find reservations by date interval and map them to DTO
         List<Reservation> reservations = reservationRepository.findByCheckInBetween(startDateTime, endDateTime);
         log.info("Reservations found by date interval.");
 
-        return reservations.stream()
+        return CompletableFuture.completedFuture(reservations.stream()
                 .map(reservation -> {
                     return reservationMapper.toResponseDTO(reservation);
                 })
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
 }

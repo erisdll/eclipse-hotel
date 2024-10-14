@@ -11,9 +11,9 @@ import com.erika.eclipse_hotel.exception.room.RoomNotFoundException;
 import com.erika.eclipse_hotel.repository.ReservationRepository;
 import com.erika.eclipse_hotel.repository.RoomRepository;
 import com.erika.eclipse_hotel.service.mapper.RoomMapper;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,7 +37,8 @@ public class RoomService {
     @Autowired
     private ReservationRepository reservationRepository;
 
-    public RoomResponseDTO createRoom(RoomCreateRequestDTO request) {
+    @Async
+    public CompletableFuture<RoomResponseDTO> createRoom(RoomCreateRequestDTO request) {
         log.info("Trying to create new room: {}", request);
 
         if (roomRepository.existsByRoomNumber(request.getRoomNumber())) {
@@ -48,34 +50,34 @@ public class RoomService {
         room = roomRepository.save(room);
 
         log.info("Room created successfully. ID: {}", room.getId());
-        return roomMapper.toResponseDTO(room);
+        return CompletableFuture.completedFuture(roomMapper.toResponseDTO(room));
     }
 
-    public List<RoomResponseDTO> getAllRooms() {
+    public CompletableFuture<List<RoomResponseDTO>> getAllRooms() {
         log.info("Trying to fetch all rooms.");
         List<Room> rooms = roomRepository.findAll();
         log.info("Found {} rooms.", rooms.size());
 
-        return rooms.stream()
+        return CompletableFuture.completedFuture(rooms.stream()
                 .map(roomMapper::toResponseDTO)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
 
-    public RoomResponseDTO getRoomById(UUID id) {
+    public CompletableFuture<RoomResponseDTO> getRoomById(UUID id) {
         log.info("Trying to fetch room. ID: {}", id);
         Room room = roomRepository.findById(id)
                 .orElseThrow(() -> new RoomNotFoundException("Room not found."));
         log.info("Room found. ID: {}", id);
 
-        return roomMapper.toResponseDTO(room);
+        return CompletableFuture.completedFuture(roomMapper.toResponseDTO(room));
     }
 
-    public RoomResponseDTO updateRoomById(UUID id, RoomUpdateRequestDTO request) {
+    public CompletableFuture<RoomResponseDTO> updateRoomById(UUID id, RoomUpdateRequestDTO request) {
         log.info("Trying to update room. ID: {}", id);
         Room room = roomRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Room not found."));
+                .orElseThrow(() -> new RoomNotFoundException("Room not found."));
 
-        log.debug("Updating room details: {}", request);
+        // Update only non-null fields from the DTO
         if (request.getRoomNumber() != null) {
             room.setRoomNumber(request.getRoomNumber());
         }
@@ -87,31 +89,33 @@ public class RoomService {
         }
 
         Room updatedRoom = roomRepository.save(room);
-        return roomMapper.toResponseDTO(updatedRoom);
+        log.info("Room updated successfully. ID: {}", id);
+        return CompletableFuture.completedFuture(roomMapper.toResponseDTO(updatedRoom));
     }
 
-    public void deleteRoomById(UUID id) {
+    public CompletableFuture<String> deleteRoomById(UUID id) {
         log.info("Trying to delete room. ID: {}", id);
         if (!roomRepository.existsById(id)) {
             log.error("Room not found. ID: {}", id);
-            throw new EntityNotFoundException("Room not found.");
+            throw new RoomNotFoundException("Room not found.");
         }
         roomRepository.deleteById(id);
         log.info("Room deleted successfully. ID: {}", id);
+
+        return CompletableFuture.completedFuture("Room deleted successfully.");
     }
 
     @Transactional(readOnly = true)
-    public List<RoomResponseDTO> findBookedRooms() {
+    public CompletableFuture<List<RoomResponseDTO>> findBookedRooms() {
         LocalDateTime now = LocalDateTime.now();
         log.info("Trying to fetch currently booked rooms.");
 
         List<Reservation> currentReservations = reservationRepository.findByStatusOrCheckInBefore(ReservationStatus.IN_USE, now);
         log.info("Found {} rooms currently booked.", currentReservations.size());
 
-        return currentReservations.stream()
-                .distinct()
+        return CompletableFuture.completedFuture(currentReservations.stream()
                 .map(Reservation::getRoom)
                 .map(roomMapper::toResponseDTO)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
 }
