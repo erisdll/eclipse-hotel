@@ -117,4 +117,4 @@ JOIN
 GROUP BY
     customers.id, customers.name, customers.email
 ORDER BY
-    total_reservations DESC
+    total_reservations DESC;
