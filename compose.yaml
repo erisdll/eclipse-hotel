@@ -1,4 +1,14 @@
 services:
+  eclipse-hotel:
+    container_name: eclipse-hotel
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    networks:
+      - hotel-network
+
   postgres:
     image: 'postgres:latest'
     container_name: eclipse-hotel_db
@@ -10,6 +20,11 @@ services:
       - '5432:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - hotel-network
 
 volumes:
   postgres_data:
+
+networks:
+  hotel-network:
