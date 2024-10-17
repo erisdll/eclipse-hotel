@@ -53,6 +53,7 @@ public class RoomService {
         return CompletableFuture.completedFuture(roomMapper.toResponseDTO(room));
     }
 
+    @Async
     public CompletableFuture<List<RoomResponseDTO>> getAllRooms() {
         log.info("Trying to fetch all rooms.");
         List<Room> rooms = roomRepository.findAll();
@@ -63,6 +64,7 @@ public class RoomService {
                 .collect(Collectors.toList()));
     }
 
+    @Async
     public CompletableFuture<RoomResponseDTO> getRoomById(UUID id) {
         log.info("Trying to fetch room. ID: {}", id);
         Room room = roomRepository.findById(id)
@@ -72,6 +74,7 @@ public class RoomService {
         return CompletableFuture.completedFuture(roomMapper.toResponseDTO(room));
     }
 
+    @Async
     public CompletableFuture<RoomResponseDTO> updateRoomById(UUID id, RoomUpdateRequestDTO request) {
         log.info("Trying to update room. ID: {}", id);
         Room room = roomRepository.findById(id)
@@ -93,6 +96,7 @@ public class RoomService {
         return CompletableFuture.completedFuture(roomMapper.toResponseDTO(updatedRoom));
     }
 
+    @Async
     public CompletableFuture<String> deleteRoomById(UUID id) {
         log.info("Trying to delete room. ID: {}", id);
         if (!roomRepository.existsById(id)) {
@@ -105,6 +109,7 @@ public class RoomService {
         return CompletableFuture.completedFuture("Room deleted successfully.");
     }
 
+    @Async
     @Transactional(readOnly = true)
     public CompletableFuture<List<RoomResponseDTO>> findBookedRooms() {
         LocalDateTime now = LocalDateTime.now();
